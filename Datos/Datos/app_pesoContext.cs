@@ -29,8 +29,10 @@ namespace Datos.Datos
         {
             if (!optionsBuilder.IsConfigured)
             {
+                string projectBaseName = "ApiAppPeso";
+                string basepath = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.FullName;
                 IConfigurationRoot configuration = new ConfigurationBuilder()
-                   .SetBasePath(Directory.GetCurrentDirectory())
+                   .SetBasePath(basepath+ "\\"+ projectBaseName + "\\Datos\\")
                    .AddJsonFile("appsettings.json")
                    .Build();
                 var connectionString = configuration.GetConnectionString("Database");
