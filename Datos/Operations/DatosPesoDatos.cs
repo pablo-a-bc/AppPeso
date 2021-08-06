@@ -25,13 +25,12 @@ namespace Datos.Operations
                         response.Message = "Usuario no válido en base de datos";
                         return response;
                     }
-
-                    var today = DateTime.Now.ToLocalTime().ToString();
+                    string hourMinute = DateTime.Now.ToString("HH:mm");
                     var insert = new Datospeso()
                     {
                         Peso = peso,
                         Fecha = DateTime.Parse(fecha),
-                        Hora = TimeSpan.Parse(today),
+                        Hora = TimeSpan.Parse(hourMinute),
                         UsuarioIdusuario = idusuario,
                     };
                     await db.AddAsync(insert);
