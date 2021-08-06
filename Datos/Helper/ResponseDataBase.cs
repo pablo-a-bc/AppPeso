@@ -10,4 +10,12 @@ namespace Datos.Helper
         public bool Resp { get; set; }
         public string Message { get; set; }
     }
+
+    public class ResponsePesoMinMax
+    {
+        public float PesoMin { get; set; }
+        public float PesoMax { get; set; }
+
+        public ResponseDataBase Response { get; set; }
+    }
 }
