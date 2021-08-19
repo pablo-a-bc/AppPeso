@@ -18,8 +18,8 @@ namespace Datos.Operations
             {
                 using (app_pesoContext db = new())
                 {
-                    var usuario = await db.Usuarios.FirstOrDefaultAsync(x=>x.IdUsuario== idusuario);
-                    if(usuario==null)
+                    var usuario = Usuariovalido(idusuario);
+                    if(usuario==false)
                     {
                         response.Resp = false;
                         response.Message = "Usuario no válido en base de datos";
@@ -58,6 +58,78 @@ namespace Datos.Operations
          
 
        }
+
+        public bool Usuariovalido(long idsusuario)
+        {
+            using (app_pesoContext db = new())
+            {
+                var usuario = db.Usuarios.FirstOrDefaultAsync(x => x.IdUsuario == idsusuario);
+                if (usuario == null)
+                {
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
+
+
+            };
+        }
+
+
+        public async Task<ResponsePesoMinMax> PesoMinMax(long idusuario)
+        {
+            ResponsePesoMinMax response = new();
+            ResponseDataBase resp = new();
+            try
+            {
+                using (app_pesoContext db = new())
+                {
+
+                    var usuario = Usuariovalido(idusuario);
+                    if (usuario == false)
+                    {
+                        resp.Resp = false;
+                        resp.Message = "Usuario no válido en base de datos";
+                        response.Response = resp;
+                        return response;
+                    }
+
+                    var pesousuario = await db.Datospesos.Where(x => x.UsuarioIdusuario == idusuario).ToListAsync();
+                    if(pesousuario.Count==0)
+                    {
+
+                        resp.Resp = false;
+                        resp.Message = "Usuario sin pesos registrados";
+                        response.Response = resp;
+                        return response;
+                    }
+                    var min = pesousuario.Min(x => x.Fecha);
+                    var max = pesousuario.Max(x => x.Fecha);
+                    var searchfirstweight = pesousuario.FirstOrDefault(x => x.Fecha == min);
+                    var searchlastweight = pesousuario.FirstOrDefault(x => x.Fecha == max);
+                    float firstweight = (float)searchfirstweight.Peso;
+                    float lastweight = (float)searchlastweight.Peso;
+                    float dif = firstweight - lastweight;
+                    response.PesoMin = firstweight;
+                    response.PesoMax = lastweight;
+                    response.DifPeso = dif;
+                    resp.Resp = true;
+                    resp.Message = "Ok";
+                    response.Response = resp;
+                    return response;
+                };
+            }
+            catch (Exception ex)
+            {
+
+                resp.Message = ex.ToString();
+                resp.Resp = false;
+                response.Response = resp;
+                return response;
+            }
+        }
 
     }
 }
